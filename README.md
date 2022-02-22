@@ -26,7 +26,54 @@ Buildspec.yaml: Configures phases: install, pre-build, build, post_build. Will c
 Envt Variables can be added to CodeBuild project also. Create secrets in System-Manager parameter. Attach SSM policy to code build role to access SSM. Using paramater store is secure way. \ 
 Build outputs ( jar or image) as artifacts: Configure Artifact(S3) in CodeBuild project. Configure artifact location in buildspec.yaml. 
 
+*AWS CodeDeploy*
+Automate code deployment on EC2, ECS, Lambda and on premise. \
+CodeDeploy agents run on instances where deployment should happen. As a DevOps person, we need to define - What is to be deployed, Where it should be deployed and how it should be deployed. This is defined in appspec.yml and configuration file. \
+You have to provision all resources for CodeDeploy in advance. For deploying to an Ec2 instance, 1. create Ec2 instance. 2. Create IAM role with access to S3. 3. Login to Ec2 and install Code deploy Agent(by running sudo commands) . These script can be provided as user data script while creating Ec2 instance. 4. Add tags envt:prod 5. Create application in CodeDeploy. 6. Create Deployment group ( a set of Ec2 instances for application) 7. Create a role for code deploy. 8. Deployment type - Inplace and Blue/Green deployment 9. Choose tag group prod ( target all Ec2 instances with tag envt:prod) 10. Create deployment - Application Revision type - in Amazon S3. 11. Create a bucket and enable versioning 12. Place folder with appspec.yml file to s3. Code deploy with push this to desired folder in Ec2. \
 
-## DevOps with Azure
+Deployment type - Inplace: Instance will be offline for some time. Strategies - AllAtOnce, OnceAtATime, HalfAtATime or custom configuraion(80% at a time) . \
+Deployment type - Blue/Green: Once new instances are up, then old instances removed. Mandatory to have load balancer and auto scaling group configured. \
+
+appspec.yml : source, destination, hooks-> ApplicationStop, BeforeInstall, AfterInstall, ApplicationStart, ValidateService. Hooks have location parameter which points to scripts. These scripts are part of repo.  Execute scripts to stop server, start server(httpd), install dependencies. 
+
+Rollback: U can configure in Deployment Group to rollback. If any deployment fails, then deployment is rollbacked( Rollback when a deployment fails). If not enabled, rollback should be manual. 
+
+*AWS Code Pipeline*
+Visual Workflow tool for Continuous Delivery. Configure Stages(build, test, deploy...) \
+1. Create pipeline in Code Pipeline. \
+2. Create new role. \
+3. Choose S3 bucket for pipeline. \
+4. Add Source Provider - AWS CodeCommit. Change Detection options - CloudWatch Event(recommended) or CodePipeline default(Pool for changes every 30 mins) \
+5. Add deploy stage. Deploy Provider: CodeDeploy. Choose Deployment Group. Choose region. Supports multi regon deployment. \
+6. Add manual approval steps for deploying changes to prod. 
+
+## Azure DevOps
+
+Azure Boards, Azure Repos, Azure Pipeline
+
+Accessible through Azure DevOps Web Portal or Visual Studio 
+
+Azure Pipeline: Pipeline contains stages. Stages contains tasks. 
+
+## Teraform
+
+Infrastrcuture Management Tool for managing Servers, Networking, Storage through code. Teraform is for provisioning. It is not a configuration management tool. Using teraform you provision a server. To turn it to a web server u need to use puppet. Teraform is used for Immutable infrastructure. Can work with Docker and K8s. 
+
+1. Download Teraform CLI
+2. Create a user in AWS account
+3. Keep AWS credentials in a file
+
+``
+  provider "aws" {
+    profile ="default"
+    region  = "us-west-2"  
+  }
+  
+  resource "aws-s3-bucket" "tf_cource" {
+    bucket =" tf-course-2022"
+    acl    ="private"
+  }
+
+``
 
 
