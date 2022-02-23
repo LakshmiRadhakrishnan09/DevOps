@@ -75,5 +75,23 @@ Infrastrcuture Management Tool for managing Servers, Networking, Storage through
   }
 
 ``
+terraform init \
+terraform plan \
+terraform apply \
+terraform state \
+terraform graph ( u can use WebGraphViz for seeing the graph) \
+
+terraform plan -out "example.plan" \
+terraform apply "example.plan" \
+
+Terraform takes the code, compares it with state of resource and come up with an execution plan. Teraform use a *Resource Graph*(Directed Acyclic Graph) to come up with execution plan. It orders resource creation/modification based on execution plan.  \
+
+State: State of your resources in AWS. State of local terraform files in local dir.(Saved in terraform.tfstate. Generated automatically) \
+
+Best Practice : Teraform style. Documented in site. 
+
+Teraform Modules
+
+
 
 
