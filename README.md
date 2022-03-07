@@ -92,6 +92,24 @@ Best Practice : Teraform style. Documented in site.
 
 Teraform Modules
 
+### Managing Terraform with Sentinel
+Policy As Code - Policies are written using the Sentinel language.Policies are the guardrails that prevent Terraform runs from performing dangerous actions.\
+Teraform Enterprise Cloud -> Create Organization -> Create Workspace -> Plan and Apply \
+Rules are written in sentinel \
+    configured_instance_type = tfplan.module().resources.aws_instance.web[0].applied.instance_type //Pull information from terraform plan. \
+sentinel.hcl file - configure policies and enforcement level. soft-mandatory, hard mandatory.
+
+Terraform Cloud: When we commit a Run is triggered. It will run Plan, Cost estimation, Policy Check and Apply pending. \
+Foundational Policies library: Bench mark for each service provider. CIS policies. Copy Policy. Go to sentinel.hcl file and paste it there. Source parameter is referencing to  policy already implemented in foundational policy library.
+OPA vs Sentinel: Goals are same. Using declarative policy engine to apply policy. Sentinel is created by HarshiCorp. OPA can be used with different products. \
+Organization Level Policies in Teraform Enterprsie: Apply Sentinel Policy to all workspace within an organization .Add Policy Name. Add Policy Code - Add Sentinel code.
+Policy sets are groups of policies that can be enforced on workspaces. \
+A policy set is simply a directory structure containing a Sentinel configuration file and some policy files.\
+
+    
+
+
+
 
 
 
