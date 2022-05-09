@@ -40,6 +40,7 @@ Rollback: U can configure in Deployment Group to rollback. If any deployment fai
 
 *AWS Code Pipeline*
 Visual Workflow tool for Continuous Delivery. Configure Stages(build, test, deploy...) \
+
 1. Create pipeline in Code Pipeline. \
 2. Create new role. \
 3. Choose S3 bucket for pipeline. \
@@ -105,6 +106,10 @@ OPA vs Sentinel: Goals are same. Using declarative policy engine to apply policy
 Organization Level Policies in Teraform Enterprsie: Apply Sentinel Policy to all workspace within an organization .Add Policy Name. Add Policy Code - Add Sentinel code.
 Policy sets are groups of policies that can be enforced on workspaces. \
 A policy set is simply a directory structure containing a Sentinel configuration file and some policy files.\
+
+## Maven Plugin Development
+A plugin consist of many number of goals(Mojo). Mojos can be defined as annotated java class or bean shells scripts. A Mojo specifoes metadata about the goal. which phase it executes and the parameters it is expecting. 
+
 
     
 
