@@ -142,6 +142,13 @@ https://blog.styra.com/blog/policy-based-infrastructure-guardrails-with-terrafor
 https://www.styra.com/terraform-cloud-config-management-with-styra-das-and-open-policy-agent
 
 
+### 3 R's of security
+
+1. Rotate: Rotate secrets that are injected by platform.Rotate every hour.
+2. Repave: Repave from a known good state than doing patch.
+3. Repair:
+
+
 
     
 
