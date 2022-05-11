@@ -108,7 +108,39 @@ Policy sets are groups of policies that can be enforced on workspaces. \
 A policy set is simply a directory structure containing a Sentinel configuration file and some policy files.\
 
 ## Maven Plugin Development
-A plugin consist of many number of goals(Mojo). Mojos can be defined as annotated java class or bean shells scripts. A Mojo specifoes metadata about the goal. which phase it executes and the parameters it is expecting. 
+A plugin consist of many number of goals(Mojo). Mojos can be defined as annotated java class or bean shells scripts. A Mojo specifoes metadata about the goal. which phase it executes and the parameters it is expecting. You can create custom plugins in Maven
+
+## Policy as Code
+
+Terraform: Infrastrcuture as code. Sentinel Policies to support policy as code.
+
+OPA: General purpose policy engine. Not only for Infrastructure but for k8s, authorization. Caters to whole organizations policy needs. OPA is an open source policy engine that allows you to write and validate policy as code. 
+Two modes of running. 1. Run as a server: Exposes REST Apis consumed by microservices for evaluating policies. 2. Run it using command line: opa eval
+
+terraform plan -out tfplan.binary
+terraform show -json tfplan.binary > tfplan.json
+opa eval --fail-defined --format raw --input tfplan.json --data policy/ 'data.main.deny[x]'
+
+https://miro.medium.com/max/1400/1*P1vle8YG-QNlQDUgaSaawQ.png![image](https://user-images.githubusercontent.com/33679023/167811182-e6f19335-54e2-4193-a579-270e09498684.png)
+
+
+OPA and Sentinel Policies: Policy as Code engines. But Sentinel is a paid product. OPA is open source.
+
+Puluni: Infrastructure as code. CrossGuard to support policy as code.
+
+OPA support in Pulumi CrossGuard: Allows to define Pulumi policy in rego. Execution is using pulumi deployment engine. Pulumi Policy pack checks policy folder and enforce policy are enforced before deploying infra resources.
+
+Conftest: Conftest is a utility to help you write tests against structured configuration data.Conftest by default scans for those in a directory called policy.
+
+conftest test tfplan.json
+
+Fregot : a lightweight alternative to OPA's built-in interpreter, designed to validate cloud infrastructure from providers like AWS and Azure. Fregot's REPL allows you to interactively debug Rego code with easy-to-understand error messages, and you can evaluate expressions and test policies.
+
+
+https://blog.styra.com/blog/policy-based-infrastructure-guardrails-with-terraform-and-opa
+
+https://www.styra.com/terraform-cloud-config-management-with-styra-das-and-open-policy-agent
+
 
 
     
