@@ -1,0 +1,16 @@
+AZ 500
+
+MarketPlace : Offered by other companies( open source or paid)
+
+IaaS : Client is responisble for OS updates. CP is responisble for Physical Security.
+PaaS : CP takes care of OS updates. You are responsible for network.
+Saas: Eg: Sql Database
+
+Azure Local : Lets u run azure functionality on your hardware. Azure Ark - Same control Plane for Private and Public.
+
+
+
+Thoughts
+-----------
+
+How to use CP Shared Responsibility in Controls?
