@@ -8,9 +8,22 @@ Saas: Eg: Sql Database
 
 Azure Local : Lets u run azure functionality on your hardware. Azure Ark - Same control Plane for Private and Public.
 
+Availability
+Scalability
+Elasticity
+Reliability
+Preditability
+Security
+Redundancy
+
+Load testing
+Disaster Recovery Testing
+
 
 
 Thoughts
 -----------
 
 How to use CP Shared Responsibility in Controls?
+Does traffic flactuate for all applications?
+
