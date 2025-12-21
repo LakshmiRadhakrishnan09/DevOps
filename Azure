@@ -57,6 +57,17 @@ Sovereign Regions
   - Different complance and security
   - in US Azure Government, Azure Government Secret, Azure Government Top Secret
   - China - Org with business in China
+Availability Zones : Physically seperated data centers within each Region. ( seperate buildings in a location 
+or few miles apart locations). High speed network connection between Azs. Each zone has dedicated physical infra.
+Few regions dont have AZs.
+Not every support AZs.
+
+
+3 Types of AZ Serices
+Zonal Service : Resource deployed to a specific AZ. Eg. Virtual Machines.
+Zone Redundant Service
+Always Available Service
+
 
 
 
