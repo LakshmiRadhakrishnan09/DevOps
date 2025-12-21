@@ -10,14 +10,54 @@ Azure Local : Lets u run azure functionality on your hardware. Azure Ark - Same 
 
 Availability
 Scalability
-Elasticity
-Reliability
+Elasticity(Auto scaling). System monitors some metric add/remove servers.
+Reliability : Recover from failues. Come back quickly. Avoid single points of failure. Multi region deployment. Backups. Monitoring.
 Preditability
-Security
+Security.
+  - Microsoft Security Response Center
+  - Always on Ddos
+  - Azure Policy
+  - RBAC
+  - Encryption by default
 Redundancy
+Goverance ( Company Policies)
+  - Policies are followed
+  - Auditing and Reporting
+  - HIPAA , PCC and GDPR
+  - Management Subscriptions ( Similar to AWS OUs)
 
-Load testing
-Disaster Recovery Testing
+IaaS : Azure Virtual Machines, Azure Storage, Virtual Networks
+PaaS : Azure App Service, Azure SQL Storage, FrontDoor, LoadBalancer, Firewalls
+SaaS : Office 365. DropBox, One Drive, Skype . Just use the applications.
+
+Azure Function(Equvalent to AWS Lambdas) : fisrt one million per month is free
+- Cost Efficient for intermittent workloads(dev test).
+- Cannot predict cost. it is based on use
+- Cold Start
+
+
+Azure Provisioning - ARM templates, Biceps, Terraform
+
+
+Core Azure Architecture
+----------------------
+
+Regions : set of datacenters
+Regions Pair : each region is connected to a region. 
+ - Fatsest connection. Useful for backups.
+ - Updates wont happen concurrently for a region pair.
+ - If the Pair is to another country, then data may leave that country.( Bazil with US has one way pair).
+ - If pair is within same country, data wont leave that country( eg: Canada)
+ - Qatar is the first country with no pair. Do not support Geo Redundant Storage(GRS). U need to take care of backups.Use AZ for availability
+ - 60+ regions. There are rescrictions like for some countries you should be a resident.
+Sovereign Regions
+  - Use by Country or Government
+  - They are not connected to Azure Public Cloud
+  - Require approal to join a subscription
+  - Different complance and security
+  - in US Azure Government, Azure Government Secret, Azure Government Top Secret
+  - China - Org with business in China
+
 
 
 
@@ -27,3 +67,7 @@ Thoughts
 How to use CP Shared Responsibility in Controls?
 Does traffic flactuate for all applications?
 
+Load testing
+Disaster Recovery Testing
+
+How are we making sure where data resides ( regions?)
