@@ -36,13 +36,13 @@ Azure Function(Equvalent to AWS Lambdas) : fisrt one million per month is free
 - Cold Start
 
 
-Azure Provisioning - ARM templates, Biceps, Terraform
+Azure Provisioning - ARM templates, Biceps, Terraform, CLI, Powershell
 
 
 Core Azure Architecture
 ----------------------
 
-Regions : set of datacenters
+Regions : set of datacenters connect by low-latency network.
 Regions Pair : each region is connected to a region. 
  - Fatsest connection. Useful for backups.
  - Updates wont happen concurrently for a region pair.
@@ -65,8 +65,43 @@ Not every support AZs.
 
 3 Types of AZ Serices
 Zonal Service : Resource deployed to a specific AZ. Eg. Virtual Machines.
-Zone Redundant Service
-Always Available Service
+Zone Redundant Service: Automatically deployed to multile Az Eg: Azure SQL Database.
+Always Available Service : Globally services. Active Directory, Azure FrontDoor.
+
+LB, Gateway - Flexible. Zonal or Zone redundant.
+
+Resources and Resource Group
+Management Groups -> Subscriptions-> Resource Groups -> Resources
+
+A resource is associated with one and only one subscription. Resource cost is billed to that subscription.
+
+Resource Group
+- Is a logical group of resources. Same lifecycle ( created /managed and destroyed and  deployed together).
+- A resource group is associated with a region, but it can contain resources within different regions.
+
+A resource is associated with one and only one Resource Group.
+Permissions can be assigned at Resource Group level.
+There is no security boundary offered by resource group. Unless otherwise restrcted a resource group can access another resource group.
+
+Subscriptions
+
+- A billing Unit
+- Administrative Boundary - Compliance
+- Users can have access to different Subscription
+- Enterprise Agreement
+- A subsciption is associated to one and only one Management Group.
+
+Management Groups
+- Management Groups can be nested. 
+- Management Groups can own other management Groups. 
+- Pre defined resources available to all resources.
+- Forms a Hierarchy. Root Management group.
+- A Management Group can have multiple subscriptions.
+- Management Group is Optional
+- A management group can have a maz of 6 layers ( Important)
+- Allows apply of Azure and RBAC policy, governance policy at top level - Inheritance. Inherited by all subscriptions underneath.
+
+
 
 
 
