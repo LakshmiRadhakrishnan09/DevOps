@@ -102,13 +102,408 @@ Management Groups
 - Allows apply of Azure and RBAC policy, governance policy at top level - Inheritance. Inherited by all subscriptions underneath.
 
 
+Azure
+
+
+Compute Services
+—————————————————————
+
+Compute Types in Azure
+
+- Virtual Machines 
+- VM Scale Sets
+- App Services
+- Azure Container Instances
+- Azure Container Apps
+- Azure K8s Services
+- Virtual Desktops
+
+
+Virtual Machines ( IaaS)
+- A single physical machine that is rented out. A slice is what u may have got. Analogy - Apartment on a land. 
+- A slice of physical machone shared with other customers.
+   - Equivalent to Ec2.
+   - Choose OS, number od CPUs. IOPS.
+
+Scale up - Vertical
+Scale out - Horizontal
+
+Scale Set
+- Grow and shrint based on schedule or monitoring metrics.
+- two or more VMs ( 100 VMs to 1000 VMs
+
+Availability Sets : You want to indicate Azure that machines should be seperated from each other. For fault Isolation.
+Put on different fault domian and update domain.
+Fault domian : Unplanned outages. Different racks
+Update domian : Planned outages. Azure roll out plan ( may be 20 servers at a time)
+
+Proximity Group : Part of VM Scale Set. As close as possible. Same rack. 
+Performace benefit( fast inter server communication).
+Less Availability 
+
+
+App Services/Web Apps ( Paas)
+
+- Give ur code and configuration, they will run it
+- No access to hardware
+- Promise for Performance
+- Easier to develop. Give features like deployment slot (Blue green deolyment)
+
+Azure Container Instances : Single instance of container
+Azure Container Apps: Serverless. Can Scale to Zero. For microservice. KEDA.
+Azure K8s Services: More control and flexibility
+
+
+Azure Desktop: Desktop version on windows that run on cloud. 
+
+Azure Functions: Short running pieces of code. Very cheap. 
+one million execution is free per month.
+Can support - Durable functions, long running functions, dedicated hosting
+Hosting Plans :
+Consumption: pay as u go.
+Flex Consumption: Can always run. 
+App Service Plan
+Container App 
+Read more on hosting plans
 
 
 
+Azure Networking Services
+—————————————————————
+
+Virtual Networks(IaaS)
+
+Why It is called Virtual - It is a database entry. Physical network already exists. But it wont allow to connect. By creating a virtual network you group things that can talk to each other.
+
+When u define a VNet, u define an **address space**. These are private address. Not reachable from internet. No path from outside.
+There is no shortage of private address.
+
+All VNets are divided into SubNets. Subset of IP range.
+
+Virtual Machines must belong to atleast one Subnet , using a Network Interface Card(NIC).
+Some VMs have more than one NIC and connect to more than one subnet. More than one private IP.
+Can be assigned with a Public IP.
+
+Network Security Group
+Access Control List that block inbound and outbound traffic.
+5 tuple match
+Allow rules and Deny Rules
+Rules have priority
+No traffic unless **atleast one ALLOW rule matches**
+
+VPC Peering : Connect two Virtual Networks.
+They should not have conflicting IP addresses.
+High Speed
+
+
+VPN Gateway
+Virtual Private Gateway : Connect two networks. **Provides Encryption.**
+Install VPN Gateway as a virtual device.
+Highly secure
+
+Work from Home - Point to Site VPN.
+Connect two offices: Site to Site VPN
+
+ExpressRoute : High Speed private connection between your company network and azure network. Never travel over internet.
+
+Azure DNS
+
+Private DNS : Private IP address inside Azure Virtual Network. Wont work outside Azure.
+Public Domain?
+
+Service End Points( for resource eg: storage)
+
+Public Endpoint with Internet Access : Resource is discoverable and exposed to public network
+Public End Point and Specific network: Public Access only from selected network : Resource has a pulic address. But only  specific VNet/subnet can access it. Traffic travels through Azure network. 
+Private Endpoint: Disables all public access. Not from other network. Use private address. Use Azure PrivateLink. Traffic never travel the public internet.
+
+
+Storage Services ( IaaS)
+—————————————
+
+Azure Storage  GPv2 Standard Storage
+
+- Blob(Container) Storage , File, Queue and Table
+- Can hold 5 Petabytes 
+
+Blob Storage
+- Azure keeps 3 copies of data by default.
+- Globsl Redundancy - 6 copies
+- Access Tiers
+    - Hot: Frequently accessed
+    - Cool
+    - Cold: Rarely accessed
+    - Archieve
+
+Standard
+Premium : Costly but offers low latency. Block blobs( for high transaction rates. low latency) or Page Blobs ( for random access) or File shares(applications that need scale)
+
+Redunduncy
+Locally Redundant ( LRS) : 3 copies. Protect hard disk failures
+Geo Redundant (GRS) : backup scenarios
+Zone Redundant(ZRS) ; protect data center failures. High availability scenarios.
+Geo Zone Redundant(GZRD): critical data scenarios.
+
+Data Protection
+- Restore Point
+- Soft delete
+- Versioning
+- Change Feed
+- Immutability support ( security logs, audit logs)
+
+Encryption
+Microsoft Managed Key
+Customer Managed Key( Use a Key Vault)
+
+Infrastructure Enctyption: Additional Encyption( 2nd level)
+
+Storage Explorer and Storage Browser
+
+AZCOPY
+
+To copy blob containers. Data never leave Azure Network. Efficient data movement. Cost effective.
+Generate SAS(temporary access) for azcopy
+Works across subscription.
+Download in local or through cloud shell or Azure Storage Explorer. 
+
+File Storage
+- Can mount to device.
+- Support SMB(Windows) or NFS(Linux only)
+- Replace on premise storage ( Lift and Shift Migration)
+- Gives redundancy(multiple copies), redundancy
+
+Azure File Sync
+- Hybrid approach
+- Allows to **sync** between on premise and cloud
+
+Azure Migrate
+- Move on premise resources to cloud
+- Discover, assess and migrate
+- Migrate Hub
+    - Server migration, database migration 
+    - Create a project. Discovery Tool. 
+    - Give cost metrics. Planning ( batch)
+    - Track migration
+
+Azure Data Box - Physically shipping data
+Upload of 10TB takes 11 days. 
+Data Box - 100TB
+Data Box Disk - 8TB
+Data Box Heavy - 1 PB
+
+Identity and Access and Security
+———————————————————
+
+Microsoft Entra ID ( Azure Active Directory)
+
+Active Directory is the Legacy model based on LDAP and Kerboros communication. Entra ID is the modern approach that uses SAML and Oauth for communication.
+
+Note: https://auth0.com/blog/how-saml-authentication-works/ ( Read Later)
+SAML(Authentication) : Verifies a user's identity and grants access to enterprise applications (SSO). 
+Oauth(Authorization): Grants limited access to user data or resources (like photos, contacts) to a third-party app. 
+
+SAML : User authenticates with Auth0. When user request for a SP(Jira), a SAML request is send to Auth0 from Jira, Auth0 validates it and sends a SAML Response and the user is granted access to Service Provider(jira).
+Identity Provider (IdP) — Performs authentication and passes the user's identity and authorization level to the service provider. Eg : Auth0/Entra ID
+Service Provider (SP) — Trusts the identity provider and authorizes the given user to access the requested resource.( Eg: Salesforce, AWS, Jira).
+
+SP and IdP need to establish trusted connection. 
+ 
+
+Application would have a trust key with Idp.
+
+Windows on premise credentials could be synced with cloud ( SSO). 
+
+Handling External Identities ( Partners, Contractors, Customers)
+- Allow external users to use their own identity ( eg: gmail or facebook).
+
+B2B ( Busniess to Business)
+
+eg: external consultant ( companies with partnership)
+- Inviting others to join ur organization. You send Guest invitations
+- they will show as Guest
+- They use their own credentials( their company account)
+- You can assign roles
+  -  U dont create those users. But they can access ur resource.
+
+B2C ( Busniess to Consumer)
+
+- Inviting customers to use your application
+- They do not appear in ur organisation
+- Users use gmail/facebook
+- They dont access any resource in your organisation. They use the application.
+
+SSO
+  -  eg Office 365 login allows access to Teams
+- Entra ID issues a token that proves who you are.
+- That token is trusted by all other applications
+- Authenticate once, truested everywhere
+- One identity give access to many resources within your company
+- The application need to register with Entra ID. Trust Entra ID. The token is encryoted by private key. And can be decrypted only by Entra ID public key.
+
+Azure AD conditional access ( Optional Service. Paid Service of Entra ID)
+- Set rules based on risk. Expected vs not-expected.
+- Either allow or block access(Provide extra step eg: check email).
+
+Multi Factor Authentication
+- Something you know, you have, you are
+
+Entra ID Global Administrator account can be configured with MFA for free.
+
+Microsoft Authenticator App, Hardware Token, SMS, Voice call.
+
+High Security and Convinient - Passwordless Authentication
+
+- Using gestures to sign in (pattern on screen)
+- Iris, face (Biometric)
+- Hello data kept on device ( Windows Hello login). Embedded in the device. Auto locks when you are away.
+
+Role based access(RBAC)
+
+Built in roles
+Custom roles( Premeim tier)
+You can create custom roles made up of built in roles.
+Do not assign permissions to users.
+
+Reader
+Contributor: Cannot share . Cannot make other people Controbutor.
+Owner: Admin like. Can assign permissions
+
+Zero Trust Model of Security
+- Veify explicitly
+- Least Priviledge
+- Assume Breach
+- Just In time
+- Enctyption, Segmentation, Threat Detection(using patterns in traffic)
+- Defence in Depth
+
+
+Microsoft Defender for Cloud
+- Security Posture Management - Recommendations. Secure Score
+- Threat detection - From Microsoft Intellgence
+- Regulatory Complaince - Standards like GPCR
+- Defender Plan - Foundational (Free), Defender CSPM ( Pay Extra)
+
+
+Cost Management
+
+- Azure charge for Data Egress. Inbound is usually free.
+
+Azure Pricing Calculator
+
+TCO Calculator ( Total cost of Ownership): free toll that helps to estimate cost of migrating data from on premise to Azure. 
+
+Saving and Reserved Plans
+
+SQL Database Pay by DTU or vCore.
+
+Free tool in Azure Portal to analyze spending - Azure Cost Analysis.
+- Analyze spending over time
+- Estimate cost by end of month
+- Create Budgets
+- Resource tags helps in billing
+
+Resource Tags
+- Add metadata to resource or resource groups
+- Helps in cost tracking and governance
+- Allows filtering by tags
+- You can make tags mandatory as part of Azure Policy. 
+
+Azure Governance and Compliance
+
+Azure Blueprints is retired.
+Template Spec - ARM templates
+Deployment Stacks
+Azure Policy : At resource or resource group level. 
+Resource Locks: Restrcit the ability to modify or delete the resource. 
+	Read Only Lock and Can not delete lock.
+	Can be applied at resource level, resource group or subscription level.
+	Using RBAC control who can lock.
+Microsoft Purview
+	Powered by Intelligent platform
+	Know ur data, Protect ur data, prevent data loss, Govern your data.
+	Data Protection
+		Communication Compliance, FINRA, Confidential Information, Adult Content. Can generate report. 
+		Information Protection - Where the data is stored(Credit Card info). Label the sensitivity. Cannot fwd the message as labels are attached.
+		Prevent data loss - Prevent upload of sensitive information. Monitor Teams chat and wont allow the information to be shared.
+       Insider Risk Management
+	Identify insider risks
+	Data theft by departing employees
+	Risky browser usage
+	Install malware
+	Export of data
+
+
+Azure Policy
+Initiative : Bundle of policies
+Policies are defined as JSON.
+Assign Policy to a subsciption or a resource. Add parameters for Policy.
+Will not allow creation of resource.
+Compliance : Whether compliant or not compliant. Create exemptions if needed. Create remediation.
+
+
+Deploying Resources
+
+Azure Portal 
+Azure Cloud Shell =  (Powershell or bash )  or   Azure CLI in browser. Need a Storage Account
+	Get-AzVM
+	az vm list
+
+Azure CLI and Azure PowerShell are command-line tools that enable you to create and manage Azure resources. Both are cross-platform, installable on Windows, macOS, and Linux.
+Azure CLI
+* 		Cross-platform command-line interface, installable on Windows, macOS, Linux
+* 		Runs in Windows PowerShell, Cmd, or Bash and other Unix shells.
+Azure PowerShell
+* 		Cross-platform PowerShell module, runs on Windows, macOS, Linux
+* 		Requires Windows PowerShell or PowerShell
+Shell Environment	Azure CLI	Azure PowerShell
+Cmd	Yes	
+Bash	Yes	
+Windows PowerShell	Yes	Yes
+PowerShell	Yes	Yes
+
+Azure Arc
+- VM and Container Management
+- works on onpremise as well(outside of Azure). Even other cloud providers.
+- Manage Physical servers
+- VM Extensions
+- VM Insights to analyse perforamnce
+- Execute Scripts
+- See and manage infrastrcuture
+
+ARM ( Azure Resource Management)
+- Layer used by Portal , CLI, Powershellas well( Eveything goes through this)
+- JSON
+
+Azure Advisor
+-cost
+-Performance
+-Operational Excellence
+-Security
+-Reliability
+
+You can create an alert if u would like.
+You can dismiss them as well.
+
+Azure Service Health
+Health of Azure Platform. Not specific to ur subscription. 
+You can create alert rule.
+
+Azure Monitor 
+Can monitor in Azure, other clouds, or on-premise
+Centralized Dashboard for all logging and analytics for all - Applications, Virtual Machines, Storage Accounts, Container, Network, 	SQL, KeyVaults, Cache….
+How the app is performaing - Application Insights. When u create a web app Application Insights is enabled by default. 
+Can monitor everything in ur account!!
+Also have Logs and Metrics.
+
+Show anonymous request. Use KQL
+StorageBlobStorage, AzureMetrics, AzureActivity - TABLES
 
 
 Thoughts
 -----------
+
+Question:
+How companies handle Employee Auth? 
 
 How to use CP Shared Responsibility in Controls?
 Does traffic flactuate for all applications?
