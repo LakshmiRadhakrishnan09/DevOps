@@ -1,1 +1,711 @@
-Az 500
+Azure Security
+
+Identity and Access
+——————————————
+
+Entra ID
+—————
+
+Entra ID is an Identity Provider. It is a cloud based service and is available for on-premise, Microsoft 365, Azure, other clouds.
+Support both Authentication and Authorization.
+
+When u create an Azure Account - u get a Subscription and a **directory**( or a tenant or an Entra ID). In this directory u can define users, groups and applications.
+
+Note: a Tenant is the dedicated, isolated instance of Azure Active Directory (now Microsoft Entra ID) for an organization, while the Directory is the actual database within that tenant holding users, groups, apps, and their permissions; essentially, a tenant is your Azure AD directory, representing your organization in the cloud, and they are often used interchangeably, with the tenant being the container and the directory the service inside it. 
+
+There is trust established between subscription and tenant. This allows the subscription to trust the users that are part of tenant. But Azure RBAC (Role-Based Access Control) allows assigning roles to external identities, making resources accessible beyond the primary tenant(using B2B collaboration or Azure Lighthouse).
+
+A tenant can exist without an Azure subscription( A tenant is created first in an Azure account). 
+Every Azure subscription must be associated with exactly one Entra tenant. 
+A single Entra tenant can be associated with multiple subscriptions.
+A single Azure account has exactly ONE home tenant.
+One Azure account access multiple tenant ( using Guest option)
+
+Microsoft Entra Admin Center: Anothet portal to manage Entra ID
+Mocrosoft 365 Admin Center : To manage license
+
+Entra ID comes with a primary domain name. It will get appended to users u create. So if ur company is having a directory with name abc.onmicrosoft.com it will be appended to al users. 
+
+When an employee joins a new company, the admin adds them to Directory and share the welcome mail. 
+
+Group (Security Group)
+——————————————
+
+Group - Two types - Security and Office 365.
+
+Subscription -> Resource Group -> Resource. **Roles can be assigned to Resource or RG or Subscription.** 
+
+Azure Resource Roles
+—————————————
+
+Reader Role
+Contributor Role: Is a priviledged administrator role who can manage resource. 
+Owner Role: Can delegate access to other users and manage resource.
+User Access Administrator Role: Manage access but cannot manage resource(can delegate access to users).
+Role based access control administrator: Manage access via RBAC.( not via other mechanism like Azure Policy).
+Above are roles applicable to all resources. Roles have scope which defines where the role is applicable to. Can be all or a specific resource.
+For example, if u select a VM resource -> IAM -> assign role ;  assignableScope is limited to that resource only.
+if u select a resource group -> IAM -> assign role ;  assignableScope is RG.
+
+By default, the account owner has owner access to all resources in a subscription(Inherited). By default, the person who creates an Azure subscription becomes the Account Administrator, who also acts as the default Service Administrator, effectively having equivalent access to the Owner role at the subscription scope, granting them full control over resources, while the creator of a Microsoft Entra tenant gets the Global Administrator role. 
+
+
+Few resources have built in roles(specific to resource. eg: VM Contributor)
+
+Role JSON
+assignableScope -> can be *, or can be specific resource
+permissions -> actions, notActions, dataActions, notDataActions.
+
+Role Assignment Type -> Eligible ( Should activate before use), Active( can be used any time)
+Assignmnet Duration -> Permanent , Time Bound
+
+Note: If u have Contributor role at resource group level, you can create new Resource Types and manage them. If u want ur user to only manage VMs, then you should give them Virtual Machines Contributor role.
+
+Note: When u assign User Access Administrator Role, it got conditions - specific role, all non-priviledged roles, all roles.
+
+Entra ID Roles
+————————
+
+Entra ID roles - Entra ID itself is a Service. There are built in roles specific to Entra ID. There roles give the ability to work with Entra ID features itself eg: Create new user. 
+Note: Entra ID roles are for managing users. They are not for managing Azure resources. They are mostly Priviledged roles that can manage users operations ( Add user, reset password for users).
+eg: User Administrator
+You can assign Entra roles through Entra ID admin console. Select user -> Assign roles
+
+Default user permissions( A new user) 
+- Do not have any permission by default
+- In Entra u can set default user permissions. By default following are enabled.
+    - Users can register applications
+    - Can create new security groups
+    - Guest uesr has limited access
+    - External collaboration - Can invite guest users
+- You can set these in Entra ID admin portal.
+
+External Users
+—————————
+External Users - Can belong to another tenant or another Identity Provider. if these users want access to your resources, instaed of creating these identities , you can invite them. The member Type will be “Guest”.
+You can do this in Entra ID admin console( May be possible thru Azure Portal as well). 
+
+Delete actions on user
+——————————————
+Deleted users can be recovered in 30 days. **We cannot restore a Security based Group**. We can restore a Office 365 based group.
+
+I can add other groups in a group. Nesting if groups is allowed. 
+
+We currently don't support:
+* 		Adding groups to a group synced with on-premises Active Directory.
+* 		Adding security groups to Microsoft 365 groups.Adding Microsoft 365 groups to security groups or other Microsoft 365 groups.
+* 		Assigned membership to shared resources and apps for nested security groups.
+* 		Applying licenses to nested security groups.
+* 		Adding distribution groups in nesting scenarios.
+* 		Adding security groups as members of mail-enabled security groups.
+* 		Adding groups as members of a role-assignable group.
+
+Entra ID Licenses
+——————————
+- Free ; basic user and group management, allows on premise  directory synchronization
+- P1: hybrid uses can access both pn premise and cloud resources, dynamic membership groups
+- P2: risk based conditonal access, Prvileded Identity management
+  -  Suite
+Add billing and payment details in Microsoft 365 Admin Center. Create a user with Global Administrator role. Add License in Azure  Portal -> Entra ID -> Licenses.
+
+To assign license to application users. Microsoft 365 Admin Center -> Licenses . Add licenses ( Eg: Business Basic Licenses ). Then assign license to users or Groups.
+
+My Apps is a web based portal that is use for managing applications in Entra ID. This is a portal for users to see the applications assigned to them. 
+
+
+Notes: You can delete a user with license. But u CANNOT delete a GROUP with license. You need to remove active liceses before deleting group.
+
+Microsoft 365 users : email + sharepoint + calender
+You cannot add Microsoft 365 group to a security group.
+
+Dynamic Membership Rules
+———————————————
+Users can be added dynamically to a Group based on certain rules. Eg: Dynamic Query -> department startswith “HR”.
+You cannot add members to Group Explictly(Add member option is disabled). It is added automatically.
+Need Entra ID P1 License. Should have sufficient number of licenses left.
+Can validate rules. 
+
+Application Registeration ( in AWS you let applications assume role. In Azure u register application and ur service principal.)
+————————————————
+Register applications in Entra ID. So that applications can access Azure resources. Applications get an Application Object and a Service Principal. 
+Application Object can be used across all tenants.
+Service Principal can be used only in default tenant.
+The user become owner of application. 
+
+By default all users can register application. You can disable this setting and use RBAC roles - ApplicationDeveloper, AplicationAdminsistrator, so that only those users can register applications.
+
+Step1: Register an Application
+Account type - who can use this application
+- Accounts in this organization directory alone ( SIngle tenant)
+- Accounts in any  organization directory ( Multi tenant)
+- Accounts in any organization directory ( Multi tenant) + Personal Microsoft account
+- Personal Microsoft Account ( Skype, Xbox)
+Set Redirect URL
+
+Step2: Give permissions to application
+Delegated Permission(Signed in user)
+Application Permission ( for applications)
+Admin Consent Required
+
+Step3: Get Access token
+Use OAuth2.0
+make a request to token end point - https://login.microsoft.com/zzz/oauth2/v2.0/token
+grant_type : client_credentials
+scope: resource that u are trying to access ( eg: GraphQL)
+client_id:
+client_secret: 
+
+
+Entra ID Sign in logs and audit logs
+
+Enterprise Applications( Other Vendors: eg: DropBox)
+—————————————————
+
+Go to Entra ID Gallery -> Enterprise Applications -> Add Drop Box. Configure Single Sign on (Need a DropBox license).
+Sign -in allowed, Visible to user, Assignmnet required - Properties of Enterprise application. 
+Add users to this application.
+
+Entra ID is integrated with DropBox. So same sign in works. Sigle Sign on Support. 
+
+Self Service( for Enterprise application eg: DropBox)
+Allow users to request access
+Configure group users should be assigned to
+Require approval
+Approver - Configure a user
+
+So that users can request for access. For My apps Portal -> Add Apps -> Dropbox -> Add. This will be approved by owner. 
+
+Multi Factor Authentication
+——————————————
+
+Passwordless Authentication
+————————————————
+Windows Hello for Business, Microsoft Authenticator App
+
+Entra ID Admin -> Protection -> Authentication Method
+
+The trusted mobile wll be shown under **Devices** section.
+
+Custom banned passwords list - List the banned passwords. Microsoft Entra ID Password Protection.
+
+Conditional Access Policy
+——————————————
+Need P1 license.
+Based on signals take a decision whether to allow the sign in or not. Like if else conditions.
+Create new Policy ->  Select Users (All or Groups ) -> Target resources -> Network ( Any or trusted or selected) -> Conditions ( User risk, Insider risk, Sign in risk, Device Platforms, Locations)
+	-> Grant ( Block or Grant with conditions like require MFA, Require XXX)
+The risk comes from Entra ID Protection.
+Common Conditions
+- Require MFA for Azure management
+- Require password change for risky users
+- Require compliant devices
+- Require approval app
+
+Policy enabled as Report Only ( for testing policies)
+
+Named locations . Add trusted IPs. Can be used in conditional access. 
+
+Access will be blocked if atleast one conditional access is blocking- More restrcitive will be applied.
+
+Entra ID Protection
+——————————————
+Microsoft can detect potential problems with users and sign ins based on data collected from past and using ML alogorithms. This helps in detect any risk in sign in process. 
+
+Identity Protection Dashboard
+- No of attacks stopped
+- No of users protected
+- Risky users
+- Risky sign ins
+- Activities from anonymous IPs
+- Atypical travel
+
+For a given risk(say user risk) u can configure risk level - HIGH, LOW, MEDIUM. and controls -> Block or Allow access. 
+
+“If Microsoft believes this sign-in is risky enough, then do X.”
+
+In case of CA, it considers the risk from Entra Protection, combines it with other conditions and take a decision.
+
+Priviledged Identity Management (PIM) - Via Entra Admin Console.
+————————————————————————————————————————————————————————
+PIM can be used for Entra roles( Entra roles are mostly Priviledged roles) as well as RBAC roles and Groups.
+
+Just in Time. Assign role only when it is required ( We dont have this feature in AWS!!).
+You can also configure time bound access, approval to activate priviledged roles.
+Need P2 or Governce License.
+
+**PIM for Entra roles**
+How to make roles requestable( Priviledged roles only when required)? -> When u assign the role, Add an **Eligible Assignment** as Assignment Type ( Not an Active. An Active assignment assigns the role from that point on wards). You can configure Start and End Date. User is given the ability to request the access.
+Azure Portal -> Priviledged Identity Management -> My roles ( Entra Roles, Azure Resources, Group) -> Eligible assignments -> Activate. For a Duration( upto 8 hours). Note: Same for Entra Roles, Azure Resources, Group.
+In PIM Settings we can set the max duration the role can be activate for a specifc activation request. 
+
+**PIM for RBAC(Azure resources)**
+Entra Portal -> Identity Governance -> Priviledged Identity Management -> Azure Roles -> Select resources -> Add assigment. You can configure Start and End Date. 
+
+**PIM for Groups**
+
+
+Access Reviews
+——————————————
+
+Need Entra ID Governance License or Entra Suite subscription or P2 license.
+
+How to review access - two ways
+Review Security Group , Teams, Review access to application , Package Assignments- Access Panel
+Entra Role, Azure Resource Role (PIM)- Entra Admin Center	
+
+Access Review for Applications
+Entra Admin Console -> Identity Governance -> Access Review -> Create a review -> Review Groups/Teams or Applications. Select who will review( Can be self Review), recurrence of review(may be every year).
+If reviewers doesnt review -> Remove/No change. Approve or Take recommendations.
+Will get Recommendations
+There is End Date of Review. You can Stop the review. 
+When completed Settings . Once the review is completed, the result is applied. ( Deny the user that is not approved). The user will be removed if user is denied.
+
+
+Access review for PIM
+Entra Admin Console -> Identity Governance -> **PIM** -> Access Review -> Create a review -> Select a Priviledged role. Select start and end date and frequency.
+Reviewer can review the access via Entra Admin Console -> PIM -> Access Review. Can approve Eligible access.
+
+ 
+Administrative Units
+——————————————
+
+Within a tenant how to have different Departments? Azure Account keep resources in a Subscription under resource group. But this concept is not there in Entra ID. So if u give one user, admin access, then that user will become admin for all resource groups.
+
+Have Administrative Units for each Department.
+
+Each Administrator of AU, need P1 license. The users can have free license. 
+
+Administrator of AU can manager direct users under the AU. They cannot manage if users are inside a Group.
+
+
+Hybrid Setup - Microsoft Entra Connect / Microsoft Entra Cloud Sync(new solution) . Azure AD Connect(old name)
+
+Companies may use their own Idenity based software ( for eg: Microsoft Active Directory). To sync data between Microsoft Active Directory and Entra ID - Microsoft Intra Connect 
+
+Step1: Set up custom domain for EntraID. Go to Default Directory -> Custom domain Names. By default email.onmicrosoft.com. Add domain aroundtheworld.com( from GoDaddy). Add Record in GoDaddy ( Destination to address will be obtained from Azure Portal).
+
+Step2: Install Domain Controller : Windows Server -> Server Manager -> Add roles -> Actove Directory Domain Server Services(Identity Solution) -> Add a new forest -> Root domain name ( aroundtheworld.com) -> Install. You can add users( users on o-premise Active Directory). This will have a local Server with domain name aroundtheworld.com. DNS maps the virtualmachine(domainvirtual1 to aroundtheworld.com). 
+
+
+Step3: For the Azure Virtual Network -> DNS Servers -> Add the private on premise betwork as DNS Server for private network. Add Custom -> IP Address( Private IP of On premise VM)
+
+Step4: Host Entra Connect on another VM. This VM should be connected to onpremise domain. Local Server -> Make it part of Domain(aroundtheworld.com). Provide domain credentials. 
+Download Microsoft Entra Connect.
+
+Step5: Configure Microsoft Entra Connect(on another VM).  Connect to Entra ID(Azure) providing username and password. Connect your directory. (forest : aroundtheworld.com - on premise AD). Create a new AD Account (for on premise) for performing synchronization. This will sync the users. On premise users will be able to use cloud resources. 
+
+Password Hash Syncronization: hash of the hash of the users password in on-premise is srored in Microsoft Entra ID. User can use same username and password in on-premise and cloud.
+Pass through Authentication: Password validation happens on-premise active directory server. You can enforce constraints that are available in Microsoft Active Directory.
+
+Synced users: You can edit the user properties in Entra ID. U need to make changes in Active Directory Service. 
+WriteBack of password : If user change password in Entra ID, it will be updated in Active Directory.
+
+Application Proxy
+——————————————
+
+WebServer in on premise(Internal web application). If Employees want to access the application from internet without exposing the application to internet. 
+Application Proxy gives remote access to on-premise web application.
+
+Need P1, P2 license
+
+Install connector (in a VM in on-premise network) to connect to Entra ID. Private Network Connector. Can be downloaded through Entra ID Admin Console. Global Secure Access-> Connectors => Private Network Connectors..
+Once this is in place, we have an application that is in Entra that maps to private network. Establish a private network. 
+
+Configure on premise application in Entra ID. Internal url, External  app. It will be avilable as an Enterprise application. ( msproxyapp.com)
+
+Note:
+
+Deleted users will be avilable for restore for 30 days. But you CANNOT restore deleted Security Groups.
+
+—————————————
+Networking
+—————————————
+
+Network Security Groups
+——————————————
+
+Inbound Security Rules and Outbound Security Rules - Can ne allowed or denied. 
+Rules are processed by priority ( lowest number first. So first match wins. ). So if lower priority deny, then request is not allowed. Once a rule is matched, then other rules are not checked.
+DENY RULES SHOULD BE OF LOWEST NUMBER ( HIGHEST PRIORITY).
+Rules are stateful.
+Security Group can be assigned to  Subnet or NIC. You can associate multiple subnets to a single security group.
+
+Default Rules 
+- Allow vNet inbound. 
+- Allow Azure Load Balancer inbound
+- Deny all other inbound. 
+- Allow all outbound. 
+- Deny all other outbound
+
+When u have multiple network security groups( associated via NIC and associated via Subnet) , then traffic should be allowed in both securty groups. 
+
+Note: When allowing IP address in security group for Destination use the private one ( not the public one). For source it can be private or public ip. 
+
+Note: in AWS there are no Deny rules. 
+
+Application Security Groups
+———————————————
+
+Create an Application Security Group resource. Associate Application Security Group  to VMs. Now in a Network Security Group u can give Application Security Group as destination. ( This is similar to the concept of ip prefix list or referencing a security group in AWS. Application security Group help to group together the IPS so that rules can be dynamically associated to IPS). Application Security Group is just a logical group of VMs. 
+
+Virtual Network Peering
+———————————————
+
+Connect Virtual Networks together so that machines can communicate using private IP address. Use Azure Network. 
+You can peer networks across Regions and across subscription.
+Without peering, machines in different vNets can communicate over internet(public address) only.
+Go to Virtual Network( any one - source or destination) -> Peering -> Add -> It will establish link in both direction.
+Creating peering is an easy process. No hardware installation required.
+
+User Defined Routes
+———————————————
+Note: DNS resolve the IP( what IP). Routing decides what is the next destination to send packates to destination IP ( path to next hop. how to route traffic).
+Every OS has a route. Your local machine has route table 0.0.0.0/0 -> Router. Router will have route table to ISP.
+For Virtual Network, Azure provides default routing table - Azure System Routes. It is attached to NIC. It contains route for
+- VNet address space. VNet Address Space -> Virtual network
+- Peered VNets
+- Internet. 0.0.0.0/0 -> Internet
+- Above is managed by Azure
+
+Custom Route : All traffic should go through Firewall( even traffic within same vnet)
+Used defined Route: 
+Create New Route Table -> Add Route ( Next hop type is Virtual Appliance. Route traffic to subnet to Firewall installed VM. Next hop address: private address of Firewall installed VM). 
+For the Firewall VM -> Enable IP Forwarding . Login to Firewall VM and change the configuration file(sysctl.conf) for enabling IP v4 packet forwarding ( Enable the firewall machine to forward packets).
+
+Note: Understand more on precedence on Route rules. How custom rule got precedence ober default rules?
+
+
+VPN - Virtual Private Network
+———————————————
+
+Allow secure connunication to Azure over internet( over a tunnel). The connection is still via internet, but it is over a secure tunnel. 
+Eg: Employees connecting to Azure vNet from home network.
+
+Secure Tunnel Protocols - OpenVPN, Secure Socket tunneling, IKEv2, IPSec.
+Authentication via Certificate, Microsoft Entra, RADIUS, Microsoft Active Directory Domain Server. 
+
+The VM inside the Vnet may not have a public IP. Even then we should be able to use VPN to connect to it over internet.
+
+Point to Site VPN 
+
+Connect Multiple client machines to Azure network
+
+- Need a Gtaeway Subnet (GatewaySubnet)
+- Deploy VPN Gateway. VPN Gateway need a public IP address. Gateway Type as VPN ( Other option is ExpressRoute)
+- VPN Gateway Type - Basic, VpnGw1,2,
+- Certificates for Authentication. The public key of root certificate will be uploaded to VPN gateway so that the gateway could trust the clients.The client certificate need to be installed on each client computer . 
+- Configure Point to Site configration. Address Pool : Client Machine IP address. Tunnel Type: IKEv2. Upload certificate
+- Download VPN Client for the Virtual Network Gateway( app-gateway). Using this we can establish connection to network.
+
+Note: Only Azure side need Gateway
+
+Site to Site VPN
+
+To connect on-premise network to Azure network. On premise network should have a Router with a Public routable IP address.
+
+Create a “Connection”. Select Connection type as Site to Site VPN(IpSec). Choose Virtual Network Gateway( the one created in Azure in previous type) and local network gateway ( the router in on -premise network). 
+
+On premier Router should be configured with IP address for VPN Gateway for VPN. 
+
+On the on-premise side, you need to have a VPN device that can route traffic via the Internet onto the VPN gateway in Azure. The VPN device can be a hardware device like a Cisco router or a software device ( e.g Windows Server 2016 running Routing and Remote services). The VPN device needs to have a publically routable IP address.
+
+The Site-to-Site VPN connection uses an IPSec tunnel to encrypt the traffic.
+
+Note: Azure need a Gateway. The on-premise should have a Router.
+
+Note: Gateway creation takes aroud 45 minutes.
+
+Network Watcher Service - Multiple tools
+———————————————
+
+1. Connection Monitor : Check the network connectivity between machines( in Azure or on-premise).
+2. Next hop
+3. IP Flow Verify : check if a packaet is allowed or denied in a **vm** by security group rules.
+    1. Select VM, NIC 
+    2. Inbound , Outbound
+    3. Port
+    4. Remote IP address and port
+4. Connection troubleshoot
+5. NSG Diagonostic
+6. Traffic Analysis
+7. NSG Flow Logs ( renamed to Virtual network flow logs)
+    1. Logs information about IP traffic flowing through the network security group.
+    2. Enable logs for VNet
+    3. Logs are stored to the S3 storage u created.
+
+Express Route
+———————————————
+ Similar to AWS Direct Connect.
+Objective is same as Site to Site VPN - allows on premise to connect to Azure( Your network and to Azure network-  like Office 365) - but here communication is not over internet - but via a private network.
+
+The ISP provider creates a direct connection with Microsoft Edge Location. ISP provider connects Partner Edge Location. 
+
+On Premise - ISP Partner Edge Location —— dedicate private connection—— Microsoft Edge - VNet.
+
+ExpressRoute has 2 connections - for redundancy.
+
+Once Express Route is in place, create Azure **private peering** connection. ( Read more on this!!)
+
+Azure Virtual WAN
+———————————————
+
+Centralized Network Connectivity. Oly for large organization with multiple branch offices.
+
+You can do all peering, site to site VPN, Point to Site VPN, Express Route to Virtual HUB.
+Virtual WAN(virtual hub hosted)
+Hub virtual network connection ( connect hub to virtual network)
+
+Virtual WANs - BASIC ( Only Site to Site VPN), Standard ( All others supported).
+
+If u are using VPN, u need VPN Gateway for each VNet. If u are using Virtual WAN, but here ( Read more on this!!)
+
+Hub private address space: Address range of XXX?
+
+To establish peering connectiong through Virtual WAN and HUB -> Virtual WAN -> Add Virtual Connections -> One for HUB to azure vNet. Another for HUB to on premise network. 
+To establish Point to Site connection -> “User VPN configuration” . Create VPN Gateway in HUB itself. Download Virtual Hub VPN Gateway Client. 
+
+Accessing Platform Services(PaaS) - Storage Accounts, Key Vault, Cosmos DB - like RDS
+——————————————————————————————————————————
+
+How to access these resources in private and secure manner? How resources in private Vnet access these platform services without internet? Otherwise resources in private vNet need to access internet to access these platform services.
+
+Set up ** Service End Points** - Traffic travels via Microsoft network.This does not private the Platform Service from being publicaly accessible. It just allows private access as well. 
+
+Step1: Create a Service End point for Azure Storage Service for the subnet.
+		Go to Virtual Network -> Service endpoint -> Select Microsoft.Storage -> Select subnets
+		U can add Service endpoint Policies
+Step2: In firewall, limit traffic only from subnet via service end point. This blocks traffic from public internet. 
+		Azure Storage Account -> Networking -> Firewalls and virtual Networks -> Add Virtual Network with Service EndPoint.
+
+Note: Jump server - will have VM with public ip (in one subnet) so that we can connect to another vNet(in another subnet) with VMs with private IP. Reduce blast radius. Allow NSG to allow jump server to subnet traffic and allow ur address to jump server. This avoids VM to have public IP but u still able to install softwares.
+
+Azure Storage Account -> Networking -> Firewalls and virtual Networks -> 
+	By default: Public network access is enabled. From anywhere. This is not very secure
+	U can enable Selected Virtual networks and IP addresses. So that we can restrict the access.
+
+Note: Even if u dont have public IP , u can access internet(outbound traffic). 
+
+Trusted Azure Services(Eg: Backup service) will also be allowed to access the storage account (this is allowed in Firewall).
+
+Benefits of using Service end points:
+- Traffic via Private network
+- From Private network of VM to public network of Azure.
+- This will not limit/stop traffic from public . You can still access via Public network. 
+
+In NSG, you can block all outbound traffic and allow outbound by **Service tag** ( Storage.NorthEurope) so that only traffic to Azure Storage North Europe is allowed.
+
+You can download the Azure Platform Services public IP ranges and Service tags. 
+
+Private End Points
+———————————————
+
+Similar to Service EndPoint, but in this case the traffic wont leave the private network. In case of Service End point, traffic is via Azure Network. In case of Private End point, traffic is within VNet. 
+
+A Private Network Interface for the Service(Storage) is created within the vNet. BRing Platform Service to. the VNet.
+
+Powereded by Azure Private Link.
+
+Benefit of Private EndPoint
+- Is for a specific Storage Account ( Not for Entire Storage Account Service)
+
+
+Service EndPoints are free. But Private endpoints got charged for hour.
+
+1. Create Private End Point for Storage Account -> Blob sub service -> Creates a NIC.
+2. DNS record <blobName>.privatelink.blob.core.windows.net maps to private IP of network Interfce
+
+Private DNS zone . The Network Interface will have a private IP ( allocated from the subnet IP range). There will be a DNS name that maps to this IP address. 
+
+Azure Web Apps - Virtual Network Integration
+———————————
+
+Managed Service. OS and patching is managed by Cloud.
+
+Azure Web app withn Vnet - so that it can access private resources like database within private network - Need Basic Service Plan or higher.
+
+Create a Subnet(For Azure Web App) 
+Azure Web App -> Settings -> Networking -> Outbound traffic confinguration -> Virtual Network Integration -> Add Subnet. 
+
+SSL : Add a custo domian for Azure Web App and add certificates. 
+Go to Web App -> Custom domains -> Add custom domain 
+
+DDos Network Protection: set of IPs
+DDos IP Protection: individual IP resource.
+
+24*7 monitoring
+Rapid  Response Team ( only for DDos Network Protection)
+
+Azure Firewall
+—————————————
+
+Managed Service deployed with public IP.
+Create a new subnet with subnet Type “Firewall Service”. ( Azure Bastion, Firewall Management( forced tunneling), Virtual Network Gateway, Route Server - these are other types).
+Create Firewall Policy
+
+Standard : L3-L7 filtering and threat intelligence feeds.
+Premium : TLS Inspection
+
+Requirement: All outbound traffic to internet should go through Firewall.
+Create a route table and associate to all VNets. Create Route -> Next hop type : Virtual Appliance -> Next hop address -> IP address of private Firewall resource.
+
+Firewall Application Rule
+Rules are processed by Priortity Order.
+Rule Collection Groups(Priority) -> Collection(Priority, Type, Action, - Deny or Allow) -> Rules
+- DNAT Rules: To perform Network Adress Translations. Eg: From ur desktop, connect to a VM with private address through the Firewall Public IP. For this add a rule
+        - From : Ur desktop IP , Destination ( Firewall Public IP, any random port), Translated Address ( Private VM IP, Port 22).
+- Network Rules
+- Application Rules ; rules by domain names
+  - Priority number of DNAT Rules should be lower. Otherwise u will get an error. Similarly, the order for others should be maintained. 
+
+Hub and Spoke Architecture
+
+Vnet1( Hub Network Shared Infra)
+	Subnet (  GatewaySubnet)  —— On Premise Network
+	Subnet1 ( Bastion Service)
+	Subnet2 ( Firewall Service)
+— Peering——
+Vnet2 ( Spoke)
+	VM ( Private Address)
+
+Vnet1(Hub Network) -> Peerings -> Allow gateway or route server to forward traffic to spoke network
+Vnet2(Spoke Network) -> Peering -> Enable spoke network to use hub networks remote gateway or route server.
+Add a route table for Gateway Subnet to route traffic for spoke network to route to Firewall IP address.
+VM in on-premise network : To reach spoke network, For the private address range of hub network add a static route to Gateway(Azure Router).
+Add a Fiewall Network Rule: Allow traffic from on premise to spoke network.( Allow SpokeTrafficForOnPremise)
+
+Note: Azure Bastion Service is a managed jump server that allows to connect to VNets with private IP addressess only. Via Azure Portal. SKUs : Standard, Developer.
+Azure Bastion is connected to other VNets through peering.
+
+
+Azure Application Gateway
+———————————————
+
+Is a Layer 7 load balancer. 
+
+Frontend : Public IP
+Backend Pools : FEs and BEs . IP address( even on premise), FQDN or Azure web app
+Rules: URL Routing 
+
+Web Application Firewall (WAF) on Application Gateway
+—————————————
+
+This is a feature on Application Gateway that safeguards application against common exploits and vulnerabilities( SQL Injection attacks, Cross Site Scripting).
+Based on CORE RULE SET (CRS)  from OWASP.
+By default it is Detection Mode. You can switch to Prevention Mode.
+You can create Custom rules. There are default rules. (managed rules)
+
+Azure Content Delivery Netorks
+—————————————————
+
+VMS are in a region. Users for different region latency may be large. With CDN , u can create a profile and create the application behind the profile.
+CN service will cache and based on users request it will returen response from nearest location.
+
+Azure Front Door
+———————————————
+Global Service. 
+
+Enhanced version of CDN Service(more feature). Deliver content to users in low latency and greater scale. 
+
+Point of Presence locations across the world.
+
+Route requests based on domains and URL paths.
+
+Fetch from nearest region and cache. Region with fastest reposne. 
+
+Create Azure FrontEnd
+Create End Points
+Add Route -> Origin Group , Origin Path , Priority 
+
+Origin Type - Can be gateway.  
+
+Azure SQL Database installed on VM
+Azure SQL Database Service: 
+Azure SQL Managed Instance: 
+
+Azure Key Vault
+—————————————
+
+For storing secrets, certificates and encryption keys ( Similar to KMs and SSM Parameter).
+
+Permission Model -> Azure RBAC ( recommended) and Azure Vault access policy
+
+For an application to use Key Vault ; register application in Entra ID as an application object. Give access to application object to access Key Vault. 
+App Registeration -> Register -> myapp. Credentials and Secret -> Generate Secret.
+
+ClientSecretCredentials class in a .Net App can make use of Application Object in Azure. 	Get clientId, tenantId and ClientSecret from Application Object. 
+
+KeyVault -> IAM -> Add role assignment -> Job Function Roles ->  Select any BuildInRole -> Select Members -> Add application
+
+Recovery Time - 7 to 90 days
+
+To delete the key - 1. First delete 2. Then Purge.
+
+Purge protection - cannot delete until retension period
+
+Backup and Restore : Offline copy of secrets. You can download a copy and later restore the file to create the key.
+
+Enctyption at Rest - for Storage accounts and disks attached to Virtual Machines
+———————————————————————————————————————————
+
+When u use a Storage Account, data is automatically encypted using Microsoft Managed Keys(MMK). 
+
+Customer Managed Key(CMK) : Key Vault or Managed HSM
+
+Key Vault -> Generate Key -> Default ( RSA 2048 Key Size) 
+Storage Account-> Encryption -> Identity type -> System Assigned ( Assign an Identity to Storage Account). Other option is user-Identity
+To give access for Secret for Storage Account ( It is a resource; not a user or an application.It use System Assigned Identity) Asign Role -> Assign to Managed Identity 
+
+Infrastrusture level Encyption: Double encryption. This option cannot be changed after creation.
+
+Azure VM Disk Encryption:
+
+- Azure Disk Encryption( ADE) : encrypts Os and data disks( OS disk is the disk that comes with VM. Data disk are additional volumes that are attached). BitLocker feature in Windows and DM-Crypt feature in Linux. You can use Cstomer Managed Keys. 
+- Server Side Encryption(SSE) : is always enabled. 
+- Encryption at host
+- Confidential disk encryption
+
+Note: The disk attached to VM should be mount on to the VM. 
+
+Key Rotation . Rotation Policy.
+
+Managed Service Identity
+——————————————
+
+A more secure way for an application to access Azure Key Vault(instaed of using ClientSecretCredentials with clinetid and clientSecret). - a way for applications to access Azure Resources without embedding credentials.
+
+Managed Identity - An azure resource gets an Identity. This would create a Service Principal for that resource. You can provide RBAC access for the service principal .
+
+In .Net u can use DefaultAzureCredential class to get accesstoken using underlying Managed Identity on hosted resource( of VM, WebApp or Function App).
+
+VM -> Security -> Identity -> System Assigned -> ON ( An Object ID is assigned).
+Go to Key Vault -> IAM -> Add role assignment -> Select role -> Assign to Managed Identity -> VM -> VM Object ID.
+
+Management Groups
+——————————————
+
+Root Management Group (Tenant root group)-> Management Group -> Many Subscription ->Many  Resource Group -> Many Resource.
+
+You can assign RBAC at Management Group Level.
+You can assign Azure Policies at Management Group Level.
+
+Read more on Important facts about Management Groups:
+New subscriptions automatically default to root management group (RMG) when they are created.
+RMG cannot be moved or deleted.
+All Azure customers can see the RMG. But no one has access to manage RMG. 
+Microsoft Entra Global Administrator are the only users who can elevate themselves to gain access.
+
+
+Azure Policy Service
+———————————————
+
+Built In Policies
+Custom Policies
+Initiative : List of Policies
+
+Assign Policy - to Root Managed Group -> to a Managed Group -> to a subscription
+
+Note
+
+When we do RDP we can map our local folder so that we can copy local files to remote machines.
+Should they be empty subnet ( for Azure Platfrom resources)?
+What is a Guest user?
